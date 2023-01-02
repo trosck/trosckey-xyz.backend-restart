@@ -46,7 +46,7 @@ async function processHook(data) {
 async function validateHook(url) {
   const { hostname, pathname } = new URL(url)
   const data = JSON.stringify({ state: "success" })
-  http.request({
+  const request = http.request({
     method: "POST",
     host: hostname,
     path: pathname,
@@ -55,8 +55,9 @@ async function validateHook(url) {
       "Content-Length": Buffer.byteLength(data)
     }
   })
-    .write(data)
-    .end()
+
+  request.write(data)
+  request.end()
 }
 
 async function runProcess(name, args = []) {
