@@ -38,7 +38,7 @@ async function processHook(data) {
 
   validateHook(callback_url)
 
-  await runCommand("docker run " + repo_name)
+  await runCommand("docker pull " + repo_name)
   await runCommand("docker compose down")
   await runCommand("docker compose up -d")
 }
