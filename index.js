@@ -65,6 +65,8 @@ async function runProcess(name, args = []) {
   await new Promise(
     resolve => {
       const proc = spawn(name, args)
+      proc.on("error", console.error)
+      proc.on("message", console.info)
       proc.on("close", resolve)
     }
   )
