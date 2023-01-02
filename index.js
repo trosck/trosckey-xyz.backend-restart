@@ -23,12 +23,18 @@ server.on("request", request => {
 })
 
 async function processHook(data) {
+  if (!data?.length) {
+    console.error("Received incorrect payload.")
+    return
+  }
+
   const {
     callback_url,
     repository: {
       repo_name
     }
   } = JSON.parse(data)
+  console.log(`Updating ${repo_name} container.`)
 
   validateHook(callback_url)
 
@@ -54,6 +60,7 @@ async function validateHook(url) {
 }
 
 async function runProcess(name, args = []) {
+  console.log(`Run process "${name}" with "${args}" arguments.`)
   await new Promise(
     resolve => {
       const proc = spawn(name, args)
