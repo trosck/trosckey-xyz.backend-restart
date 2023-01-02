@@ -1,4 +1,4 @@
-const { spawn } = require("node:child_process")
+const { exec } = require("node:child_process")
 const http = require("node:http");
 
 const port = 6969;
@@ -38,9 +38,9 @@ async function processHook(data) {
 
   validateHook(callback_url)
 
-  await runProcess("docker", ["pull", repo_name])
-  await runProcess("docker", ["compose", "down"])
-  await runProcess("docker", ["compose", "up", "-d"])
+  await runCommand("docker run " + repo_name)
+  await runCommand("docker compose down")
+  await runCommand("docker compose up -d")
 }
 
 async function validateHook(url) {
@@ -60,14 +60,19 @@ async function validateHook(url) {
   request.end()
 }
 
-async function runProcess(name, args = []) {
-  console.log(`Run process "${name}" with "${args}" arguments.`)
+async function runCommand(command) {
+  console.log(`Run command "${command}".`)
   await new Promise(
     resolve => {
-      const proc = spawn(name, args)
-      proc.on("error", console.error)
-      proc.on("message", console.info)
-      proc.on("close", resolve)
+      exec(command, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        console.info(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+        resolve()
+      })
     }
   )
 }
